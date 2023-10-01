@@ -1,0 +1,24 @@
+<div class="titlemain" >Test Results</div>
+<div class="login">Sign In to Your Account</div>
+
+<div class="main">
+  <mat-card class="card">
+    <mat-card-header class="header">
+      <mat-card-title class="title">Login</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="input">
+      <mat-form-field class="username">
+        <input type="text" matInput placeholder="Username" [formControl]="username" required>
+      </mat-form-field>
+      <mat-form-field class="password">
+        <input type="password" matInput placeholder="password" [formControl]="password" required>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-raised-button class="submit" (click)="Login()"
+      [disabled]="!username.value || !password.value">Submit
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
