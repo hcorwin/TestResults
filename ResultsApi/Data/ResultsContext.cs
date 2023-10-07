@@ -30,7 +30,7 @@ namespace ResultsApi.Data
             {
                 x.HasKey(e => e.Id);
                 x.Property(e => e.Password).IsRequired();
-                x.Property(e => e.Username).IsRequired();
+                x.HasIndex(e => e.Username).IsUnique();
                 x.Property(e => e.Salt).IsRequired();
             });
 
