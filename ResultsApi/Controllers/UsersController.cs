@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ResultsApi.Authentication;
 using ResultsApi.Data;
-using ResultsApi.Logging;
 using ResultsApi.Models;
 using ResultsApi.Services;
 
@@ -14,18 +13,15 @@ namespace ResultsApi.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IPasswordEncryptionService _encryptionService;
-        private readonly ILogWriter _logger;
         private readonly IResultsContext _dbContext;
         private readonly IJwtProvider _tokenService;
 
         public UsersController(
             IPasswordEncryptionService encryptionService,
-            ILogWriter logger,
             IResultsContext dbContext,
             IJwtProvider tokenService)
         {
             _encryptionService = encryptionService;
-            _logger = logger;
             _dbContext = dbContext;
             _tokenService = tokenService;
         }
@@ -33,6 +29,7 @@ namespace ResultsApi.Controllers
         [HttpPost("register")]
         public async Task<ActionResult> Register(string username, string password)
         {
+
             var user = await _dbContext.Users.FirstOrDefaultAsync(x =>
                 x.Username.Equals(username));
 
@@ -61,6 +58,7 @@ namespace ResultsApi.Controllers
 
             if (existingUser is null) return BadRequest("User not found");
 
+
             var token = _tokenService.GenerateToken(username);
 
             return _encryptionService.IsPasswordEqual(password, existingUser.Password,
@@ -69,11 +67,13 @@ namespace ResultsApi.Controllers
                 : BadRequest("Login failed");
         }
 
+
         [Authorize]
-        [HttpGet("auth")]
-        public ActionResult AuthTest()
+        [HttpGet("results")]
+        public async Task<ActionResult> GetResults()
         {
-            return Ok();
+            var results = await _dbContext.Results.ToListAsync();
+            return Ok(results);
         }
     }
 }

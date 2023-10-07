@@ -1,20 +1,20 @@
-using System.Text;
-using System.Threading.Channels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using ResultsApi.Authentication;
 using ResultsApi.Data;
 using ResultsApi.Logging;
 using ResultsApi.Models;
 using ResultsApi.OptionsSetup;
 using ResultsApi.Services;
+using System.Threading.Channels;
+using ResultsApi.ErrorHandling;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(o => 
+    o.Filters.Add(typeof(ApiExceptionAttribute)));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
