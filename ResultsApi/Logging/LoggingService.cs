@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading.Channels;
 using Microsoft.EntityFrameworkCore;
 using ResultsApi.Data;
@@ -31,7 +32,8 @@ namespace ResultsApi.Logging
                 }
                 catch (Exception e)
                 {
-                    EventLog.WriteEntry("LoggingService", e.Message);
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                        EventLog.WriteEntry("LoggingService", e.Message);
                 }
             }
         }
