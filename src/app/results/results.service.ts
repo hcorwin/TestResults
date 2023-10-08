@@ -5,12 +5,12 @@ import {ITestResults} from "../interfaces/ITestResults";
 @Injectable({
   providedIn: 'root'
 })
-export class LoginService {
+export class ResultsService {
 
   constructor(private http: HttpClient) { }
 
-  Login(username: string, password: string){
-    return this.http.get(`https://localhost:7104/api/Users/login`,
-      {params: {username, password}, observe: 'body', responseType: 'text'})
+  AllResults(token: string){
+    return this.http.get<ITestResults[]>(`https://localhost:7104/api/Users/results`,
+      {headers: {'Authorization': `Bearer ${token}`}, observe: 'body', responseType: 'json'})
   }
 }

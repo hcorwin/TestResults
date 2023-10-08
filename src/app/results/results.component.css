@@ -1,4 +1,11 @@
-.what{
-  color: aliceblue;
-  font-size: 50px;
+.table {
+  margin: auto;
+  width: 50%;
+}
+
+.filter{
+  display: flex;
+  justify-content: center;
+  padding-top: 10%;
+  width: 100%;
 }

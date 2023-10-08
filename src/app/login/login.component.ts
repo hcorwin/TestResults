@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { FormControl, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormControl, Validators} from '@angular/forms';
 import { LoginService } from './login.service';
 import { Router } from '@angular/router';
+import {ITestResults} from "../interfaces/ITestResults";
 
 
 @Component({
@@ -17,10 +18,15 @@ export class LoginComponent {
               private router: Router){}
 
   Login(){
-    if (this.loginService.Login(this.username.value!, this.password.value!)){
-      console.log("true")
-      this.router.navigate(['/results']);
-    };
+    this.loginService.Login(this.username.value!, this.password.value!)
+      .subscribe(token => {
+        if (token){
+          localStorage.setItem('token', token)
+          this.router.navigate(['/results']);
+        }
+        else {
+          console.log("error with token retrieval")
+        }
+      })
   }
-
 }
