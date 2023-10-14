@@ -57,6 +57,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseCors("cors");
+
+    await using var scope = app.Services.CreateAsyncScope();
+    var db = scope.ServiceProvider.GetRequiredService<ResultsContext>();
+    await db.Database.MigrateAsync();
+    await db.Seed();
 }
 
 app.UseHttpsRedirection();
