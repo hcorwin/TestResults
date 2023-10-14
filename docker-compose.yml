@@ -1,0 +1,39 @@
+version: '3.4'
+
+networks:
+    backend:
+
+services:
+  database:
+    container_name: app-db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+        - 8002:1433
+    environment:
+        - ACCEPT_EULA=Y
+        - MSSQL_SA_PASSWORD=password@123 
+    volumes:
+        - db_data:/var/lib/mysql 
+    networks:
+        - backend
+  resultsapi:
+    container_name: app-api
+    image: ${DOCKER_REGISTRY-}resultsapi
+    build:
+      context: .
+      dockerfile: ResultsApi\Dockerfile
+    ports: 
+        - 8001:80
+    depends_on:
+        - database
+    environment:
+        - DB_HOST=database
+        - DB_NAME=Results     
+        - DB_SA_PASSWORD=password@123
+    networks:
+        backend:
+            aliases:
+                - mssql1
+volumes:
+  db_data:
+    driver: local
