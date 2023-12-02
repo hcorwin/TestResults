@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ResultsApi.Authentication;
 using ResultsApi.Data;
@@ -10,14 +9,14 @@ namespace ResultsApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public sealed class UsersController : ControllerBase
     {
-        private readonly IPasswordEncryptionService _encryptionService;
+        private readonly PasswordEncryptionService _encryptionService;
         private readonly IResultsContext _dbContext;
         private readonly IJwtProvider _tokenService;
 
         public UsersController(
-            IPasswordEncryptionService encryptionService,
+            PasswordEncryptionService encryptionService,
             IResultsContext dbContext,
             IJwtProvider tokenService)
         {
@@ -29,7 +28,6 @@ namespace ResultsApi.Controllers
         [HttpPost("register")]
         public async Task<ActionResult> Register(string username, string password)
         {
-
             var user = await _dbContext.Users.FirstOrDefaultAsync(x =>
                 x.Username.Equals(username));
 
@@ -58,22 +56,12 @@ namespace ResultsApi.Controllers
 
             if (existingUser is null) return BadRequest("User not found");
 
-
             var token = _tokenService.GenerateToken(username);
 
             return _encryptionService.IsPasswordEqual(password, existingUser.Password,
                 Convert.FromBase64String(existingUser.Salt))
                 ? Ok(token)
                 : BadRequest("Login failed");
-        }
-
-
-        [Authorize]
-        [HttpGet("results")]
-        public async Task<ActionResult> GetResults()
-        {
-            var results = await _dbContext.Results.ToListAsync();
-            return Ok(results);
         }
     }
 }

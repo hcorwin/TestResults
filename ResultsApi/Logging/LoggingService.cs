@@ -7,7 +7,7 @@ using ResultsApi.Models;
 
 namespace ResultsApi.Logging
 {
-    public class LoggingService : BackgroundService
+    public sealed class LoggingService : BackgroundService
     {
         private readonly ChannelReader<Log> _channel;
         private readonly IDbContextFactory<ResultsContext> _dbContextFactory;

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using ResultsApi.Authentication;
@@ -14,22 +15,23 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers(o => 
-    o.Filters.Add(typeof(ApiExceptionAttribute)));
+    o.Filters.Add(typeof(ApiExceptionFilter)));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 builder.Services.AddDbContextFactory<ResultsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ResultsConnectionString")));
 builder.Services.AddDbContext<IResultsContext, ResultsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ResultsConnectionString")));
 
-builder.Services.AddSingleton(Channel.CreateUnbounded<Log>(new UnboundedChannelOptions { SingleReader = true}));
+builder.Services.AddSingleton(Channel.CreateUnbounded<Log>(new UnboundedChannelOptions { SingleReader = true }));
 builder.Services.AddSingleton(x => x.GetRequiredService<Channel<Log>>().Reader);
 builder.Services.AddSingleton(x => x.GetRequiredService<Channel<Log>>().Writer);
 builder.Services.AddSingleton<ILogWriter, LogWriter>();
 builder.Services.AddHostedService<LoggingService>();
 
-builder.Services.AddScoped<IPasswordEncryptionService, PasswordEncryptionService>();
+builder.Services.AddScoped<PasswordEncryptionService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
@@ -50,22 +52,14 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseCors("cors");
 
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.UseCors("cors");
-
-    await using var scope = app.Services.CreateAsyncScope();
-    var db = scope.ServiceProvider.GetRequiredService<ResultsContext>();
-    await db.Database.MigrateAsync();
-    await db.Seed();
-}
-
-app.UseHttpsRedirection();
-
+await using var scope = app.Services.CreateAsyncScope();
+var db = scope.ServiceProvider.GetRequiredService<ResultsContext>();
+await db.Database.MigrateAsync();
+await db.Seed();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -73,3 +67,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program{}

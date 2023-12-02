@@ -3,7 +3,7 @@ using System.Text;
 
 namespace ResultsApi.Services
 {
-    public sealed class PasswordEncryptionService : IPasswordEncryptionService
+    public sealed class PasswordEncryptionService
     {
         private const int Iteration = 50000;
         private const int KeySize = 32;

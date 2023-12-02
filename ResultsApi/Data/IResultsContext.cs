@@ -8,5 +8,6 @@ public interface IResultsContext
     DbSet<User> Users { get; set; }
     DbSet<Result> Results { get; set; }
     DbSet<Log> Logs { get; set; }
+    DbSet<Movie> Movies { get; set; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

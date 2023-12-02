@@ -5,11 +5,11 @@ using ResultsApi.Models;
 
 namespace ResultsApi.ErrorHandling
 {
-    public sealed class ApiExceptionAttribute : IAsyncExceptionFilter
+    public sealed class ApiExceptionFilter : IAsyncExceptionFilter
     {
         private readonly ILogWriter _logger;
 
-        public ApiExceptionAttribute(ILogWriter logger)
+        public ApiExceptionFilter(ILogWriter logger)
         {
             _logger = logger;
         }

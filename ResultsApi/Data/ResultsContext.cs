@@ -5,7 +5,6 @@ namespace ResultsApi.Data
 {
     public class ResultsContext : DbContext, IResultsContext
     {
-
         public ResultsContext (DbContextOptions<ResultsContext> options)
         : base(options)
         {
@@ -14,12 +13,12 @@ namespace ResultsApi.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Result> Results { get; set; }
         public DbSet<Log> Logs { get; set; }
+        public DbSet<Movie> Movies { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             return await base.SaveChangesAsync(cancellationToken);
         }
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -49,6 +48,14 @@ namespace ResultsApi.Data
                 x.Property(e => e.Message).IsRequired();
                 x.Property(e => e.StackTrace).IsRequired();
                 x.Property(e => e.AddDate).IsRequired();
+            });
+
+            modelBuilder.Entity<Movie>(x =>
+            {
+                x.HasKey(e => e.Id);
+                x.Property(e => e.Image);
+                x.Property(e => e.Title).HasMaxLength(100);
+                x.Property(e => e.VideoId).HasMaxLength(150);
             });
         }
     }
